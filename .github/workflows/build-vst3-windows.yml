@@ -5,12 +5,13 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  workflow_dispatch: # Allows you to run the workflow manually from the Actions tab
+  workflow_dispatch:
 
 jobs:
   build-windows-vst3:
     name: Build Windows VST3
-    runs-on: windows-latest
+    # FIX: Changed from windows-latest to windows-2022 to ensure VS 2022 is available
+    runs-on: windows-2022 
 
     steps:
     - name: Checkout repository
@@ -28,18 +29,16 @@ jobs:
     - name: Cache JUCE dependencies
       uses: actions/cache@v4
       with:
-        # Caches the downloaded JUCE source to speed up subsequent builds
         path: build/_deps
         key: ${{ runner.os }}-juce-${{ hashFiles('CMakeLists.txt') }}
         restore-keys: |
           ${{ runner.os }}-juce-
 
     - name: Configure CMake
-      # Generates the Visual Studio 2022 project files
+      # This will now successfully find Visual Studio 17 2022
       run: cmake -B build -G "Visual Studio 17 2022" -A x64
 
     - name: Build VST3
-      # Compiles only the VST3 target in Release mode
       run: cmake --build build --config Release --target LowFreqVST_VST3
 
     - name: Upload VST3 Artifact
