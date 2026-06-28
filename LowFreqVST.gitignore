@@ -1,7 +1,0 @@
-build/
-.cache/
-*.obj
-*.pdb
-.vs/
-CMakeFiles/
-CMakeCache.txt
